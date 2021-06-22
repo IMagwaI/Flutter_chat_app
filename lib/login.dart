@@ -11,6 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'otp.dart';
+
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key, required this.title}) : super(key: key);
 
@@ -24,6 +26,7 @@ class LoginScreenState extends State<LoginScreen> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SharedPreferences? prefs;
+  TextEditingController _controller = TextEditingController();
 
   bool isLoading = false;
   bool isLoggedIn = false;
@@ -32,9 +35,25 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    // AlreadySignedIn();
     isSignedIn();
   }
 
+  // void AlreadySignedIn() async {
+  //   prefs = await SharedPreferences.getInstance();
+  //   if (prefs?.getString('id') != null) {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) =>
+  //               HomeScreen(currentUserId: prefs!.getString('id') ?? "")),
+  //     );
+  //   }
+  //
+  //   this.setState(() {
+  //     isLoading = false;
+  //   });
+  // }
   void isSignedIn() async {
     this.setState(() {
       isLoading = true;
@@ -46,7 +65,9 @@ class LoginScreenState extends State<LoginScreen> {
     if (isLoggedIn && prefs?.getString('id') != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen(currentUserId: prefs!.getString('id') ?? "")),
+        MaterialPageRoute(
+            builder: (context) =>
+                HomeScreen(currentUserId: prefs!.getString('id') ?? "")),
       );
     }
 
@@ -70,16 +91,22 @@ class LoginScreenState extends State<LoginScreen> {
         idToken: googleAuth.idToken,
       );
 
-      User? firebaseUser = (await firebaseAuth.signInWithCredential(credential)).user;
+      User? firebaseUser =
+          (await firebaseAuth.signInWithCredential(credential)).user;
 
       if (firebaseUser != null) {
         // Check is already sign up
-        final QuerySnapshot result =
-            await FirebaseFirestore.instance.collection('users').where('id', isEqualTo: firebaseUser.uid).get();
+        final QuerySnapshot result = await FirebaseFirestore.instance
+            .collection('users')
+            .where('id', isEqualTo: firebaseUser.uid)
+            .get();
         final List<DocumentSnapshot> documents = result.docs;
         if (documents.length == 0) {
           // Update data to server if new user
-          FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).set({
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(firebaseUser.uid)
+              .set({
             'nickname': firebaseUser.displayName,
             'photoUrl': firebaseUser.photoURL,
             'id': firebaseUser.uid,
@@ -106,7 +133,11 @@ class LoginScreenState extends State<LoginScreen> {
           isLoading = false;
         });
 
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen(currentUserId: firebaseUser.uid)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    HomeScreen(currentUserId: firebaseUser.uid)));
       } else {
         Fluttertoast.showToast(msg: "Sign in fail");
         this.setState(() {
@@ -131,28 +162,66 @@ class LoginScreenState extends State<LoginScreen> {
           ),
           centerTitle: true,
         ),
-        body: Stack(
-          children: <Widget>[
-            Center(
-              child: TextButton(
-                onPressed: () => handleSignIn().catchError((err) {
-                  Fluttertoast.showToast(msg: err.toString());
-                  this.setState(() {
-                    isLoading = false;
-                  });
-                }),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 60),
+              child: Center(
                 child: Text(
-                  'SIGN IN WITH GOOGLE',
-                  style: TextStyle(fontSize: 16.0, color: Colors.white),
+                  "Phone Authentication",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                 ),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
-                    padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
               ),
             ),
-            // Loading
-            Positioned(
-              child: isLoading ? const Loading() : Container(),
+            Container(
+              margin: EdgeInsets.only(top: 40,right: 10,left: 10),
+              child: TextField(
+                decoration: InputDecoration(
+                    hintText: "Phone Number", prefix: Padding(padding: EdgeInsets.all(4),
+                child: Text("+212"),)
+                ),maxLength: 10,keyboardType: TextInputType.number,controller: _controller,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(10),
+              width: double.infinity,
+              child: FlatButton(
+                color: Colors.blue,
+                onPressed:(){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) =>OTPScreen(_controller.text))
+                  );
+                } ,
+                child: Text('Next',style: TextStyle(color: Colors.white),),
+              ),
+            ),
+            Stack(
+              children: <Widget>[
+                Center(
+                  child: TextButton(
+                    onPressed: () => handleSignIn().catchError((err) {
+                      Fluttertoast.showToast(msg: err.toString());
+                      this.setState(() {
+                        isLoading = false;
+                      });
+                    }),
+                    child: Text(
+                      'SIGN IN WITH GOOGLE',
+                      style: TextStyle(fontSize: 16.0, color: Colors.white),
+                    ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
+                        padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
+                  ),
+                ),
+                // Loading
+                Positioned(
+                  child: isLoading ? const Loading() : Container(),
+                ),
+              ],
             ),
           ],
         ));
