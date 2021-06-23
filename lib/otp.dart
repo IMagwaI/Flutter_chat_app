@@ -99,7 +99,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     if (value.user != null) {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => HomeScreen(currentUserId: _credId)),
+                          MaterialPageRoute(builder: (context) => HomeScreen(currentUserId: value.user!.uid)),
                               (route) => false);
                     }
                   });
@@ -120,7 +120,6 @@ class _OTPScreenState extends State<OTPScreen> {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: '+212${widget.phone}',
         verificationCompleted: (PhoneAuthCredential credential) async {
-          print(credential.providerId + " o hada ");
           await FirebaseAuth.instance
               .signInWithCredential(credential)
               .then((value) async {
@@ -157,7 +156,7 @@ class _OTPScreenState extends State<OTPScreen> {
               });
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen(currentUserId:_credId )),
+                  MaterialPageRoute(builder: (context) => HomeScreen(currentUserId:value.user!.uid )),
                       (route) => false);
             }
           });
@@ -175,7 +174,8 @@ class _OTPScreenState extends State<OTPScreen> {
             _verificationCode = verificationID;
           });
         },
-        timeout: Duration(seconds: 30));
+        // timeout: Duration(seconds: 120)
+    );
   }
   @override
   void initState() {

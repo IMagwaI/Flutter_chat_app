@@ -9,7 +9,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'model/user_chat.dart';
+
 class ChatSettings extends StatelessWidget {
+  final String ownid;
+  ChatSettings({Key? key,required this.ownid}) : super(key: key);
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,21 +26,28 @@ class ChatSettings extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: SettingsScreen(),
+      body: SettingsScreen(ownid: ownid),
     );
   }
 }
 
 class SettingsScreen extends StatefulWidget {
+  final String ownid;
+  SettingsScreen({Key? key,required this.ownid}) : super(key: key);
+
+
   @override
-  State createState() => SettingsScreenState();
+  State createState() => SettingsScreenState(ownid: ownid);
 }
 
 class SettingsScreenState extends State<SettingsScreen> {
   TextEditingController? controllerNickname;
   TextEditingController? controllerAboutMe;
+  final String ownid;
+  SettingsScreenState({Key? key,required this.ownid});
 
   SharedPreferences? prefs;
+
 
   String id = '';
   String nickname = '';
@@ -50,15 +63,27 @@ class SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    print("hadasetting id " + ownid);
     readLocal();
   }
 
   void readLocal() async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('users')
+        .where('id', isEqualTo: ownid)
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
+    DocumentSnapshot documentSnapshot = documents[0];
+    UserChat userdata = UserChat.fromDocument(documentSnapshot);
     prefs = await SharedPreferences.getInstance();
-    id = prefs?.getString('id') ?? '';
-    nickname = prefs?.getString('nickname') ?? '';
-    aboutMe = prefs?.getString('aboutMe') ?? '';
-    photoUrl = prefs?.getString('photoUrl') ?? '';
+    id = userdata.id;
+    nickname= userdata.nickname;
+    aboutMe=userdata.aboutMe;
+    photoUrl= userdata.photoUrl;
+    await prefs?.setString('id', userdata.id);
+    await prefs?.setString('nickname', userdata.nickname);
+    await prefs?.setString('photoUrl', userdata.aboutMe);
+    await prefs?.setString('aboutMe', userdata.photoUrl);
 
     controllerNickname = TextEditingController(text: nickname);
     controllerAboutMe = TextEditingController(text: aboutMe);
@@ -86,7 +111,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future uploadFile() async {
-    String fileName = id;
+    String fileName = ownid;
     Reference reference = FirebaseStorage.instance.ref().child(fileName);
     UploadTask uploadTask = reference.putFile(avatarImageFile!);
     try {
@@ -94,7 +119,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       photoUrl = await snapshot.ref.getDownloadURL();
       FirebaseFirestore.instance
           .collection('users')
-          .doc(id)
+          .doc(ownid)
           .update({'nickname': nickname, 'aboutMe': aboutMe, 'photoUrl': photoUrl}).then((data) async {
         await prefs?.setString('photoUrl', photoUrl);
         setState(() {
@@ -125,7 +150,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
     FirebaseFirestore.instance
         .collection('users')
-        .doc(id)
+        .doc(ownid)
         .update({'nickname': nickname, 'aboutMe': aboutMe, 'photoUrl': photoUrl}).then((data) async {
       await prefs?.setString('nickname', nickname);
       await prefs?.setString('aboutMe', aboutMe);

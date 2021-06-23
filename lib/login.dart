@@ -155,7 +155,8 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      resizeToAvoidBottomInset:false,
+      appBar: AppBar(
           title: Text(
             widget.title,
             style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),

@@ -47,9 +47,12 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    print(" hada uid diali" + currentUserId);
     registerNotification();
     configLocalNotification();
     listScrollController.addListener(scrollListener);
+    // prefs!.setString("id", currentUserId);
+
   }
 
   void registerNotification() {
@@ -92,7 +95,7 @@ class HomeScreenState extends State<HomeScreen> {
     if (choice.title == 'Log out') {
       handleSignOut();
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));
     }
   }
 
@@ -385,6 +388,7 @@ class HomeScreenState extends State<HomeScreen> {
                   builder: (context) => Chat(
                     peerId: userChat.id,
                     peerAvatar: userChat.photoUrl,
+                    ownid: currentUserId,
                   ),
                 ),
               );

@@ -15,8 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Chat extends StatelessWidget {
   final String peerId;
   final String peerAvatar;
+  final String ownid;
 
-  Chat({Key? key, required this.peerId, required this.peerAvatar}) : super(key: key);
+  Chat({Key? key, required this.peerId, required this.peerAvatar,required this.ownid}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,7 @@ class Chat extends StatelessWidget {
       body: ChatScreen(
         peerId: peerId,
         peerAvatar: peerAvatar,
+        ownid: ownid,
       ),
     );
   }
@@ -39,19 +41,21 @@ class Chat extends StatelessWidget {
 class ChatScreen extends StatefulWidget {
   final String peerId;
   final String peerAvatar;
+  final String ownid;
 
-  ChatScreen({Key? key, required this.peerId, required this.peerAvatar}) : super(key: key);
+  ChatScreen({Key? key, required this.peerId, required this.peerAvatar,required this.ownid}) : super(key: key);
 
   @override
-  State createState() => ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
+  State createState() => ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, ownid : ownid);
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  ChatScreenState({Key? key, required this.peerId, required this.peerAvatar});
+  ChatScreenState({Key? key, required this.peerId, required this.peerAvatar, required this.ownid});
 
   String peerId;
   String peerAvatar;
   String? id;
+  String ownid;
 
   List<QueryDocumentSnapshot> listMessage = new List.from([]);
   int _limit = 20;
@@ -96,14 +100,15 @@ class ChatScreenState extends State<ChatScreen> {
 
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
-    id = prefs?.getString('id') ?? '';
-    if (id.hashCode <= peerId.hashCode) {
+    id = prefs?.getString('id');
+    // id = prefs?.getString('id') ?? '';
+    if (ownid.hashCode <= peerId.hashCode) {
       groupChatId = '$id-$peerId';
     } else {
-      groupChatId = '$peerId-$id';
+      groupChatId = '$peerId-$ownid';
     }
 
-    FirebaseFirestore.instance.collection('users').doc(id).update({'chattingWith': peerId});
+    FirebaseFirestore.instance.collection('users').doc(ownid).update({'chattingWith': peerId});
 
     setState(() {});
   }
@@ -167,7 +172,7 @@ class ChatScreenState extends State<ChatScreen> {
         transaction.set(
           documentReference,
           {
-            'idFrom': id,
+            'idFrom': ownid,
             'idTo': peerId,
             'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
             'content': content,
@@ -183,7 +188,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildItem(int index, DocumentSnapshot? document) {
     if (document != null) {
-      if (document.get('idFrom') == id) {
+      if (document.get('idFrom') == ownid) {
         // Right (my message)
         return Row(
           children: <Widget>[
@@ -419,7 +424,7 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   bool isLastMessageLeft(int index) {
-    if ((index > 0 && listMessage[index - 1].get('idFrom') == id) || index == 0) {
+    if ((index > 0 && listMessage[index - 1].get('idFrom') == ownid) || index == 0) {
       return true;
     } else {
       return false;
@@ -427,7 +432,7 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   bool isLastMessageRight(int index) {
-    if ((index > 0 && listMessage[index - 1].get('idFrom') != id) || index == 0) {
+    if ((index > 0 && listMessage[index - 1].get('idFrom') != ownid) || index == 0) {
       return true;
     } else {
       return false;
@@ -440,7 +445,7 @@ class ChatScreenState extends State<ChatScreen> {
         isShowSticker = false;
       });
     } else {
-      FirebaseFirestore.instance.collection('users').doc(id).update({'chattingWith': null});
+      FirebaseFirestore.instance.collection('users').doc(ownid).update({'chattingWith': null});
       Navigator.pop(context);
     }
 
