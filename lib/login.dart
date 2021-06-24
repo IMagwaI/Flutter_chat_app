@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:chat_app/videohome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -58,14 +57,9 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void goToVideo() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomeScreen(currentUserId: "1")));
-  }
 
-  Future<Null> handleSignIn() async {
+
+Future<Null> handleSignIn() async {
     prefs = await SharedPreferences.getInstance();
 
     this.setState(() {
@@ -171,24 +165,7 @@ class LoginScreenState extends State<LoginScreen> {
                         MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
                     padding: MaterialStateProperty.all<EdgeInsets>(
                         EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
-              ),
-              TextButton(
-                onPressed: () => {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VideoHomePage()))
-                },
-                child: Text(
-                  'OPEN CHAT PAGE',
-                  style: TextStyle(fontSize: 16.0, color: Colors.white),
-                ),
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
-                    padding: MaterialStateProperty.all<EdgeInsets>(
-                        EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
-              ),
+              )
             ])),
             // Loading
             Positioned(

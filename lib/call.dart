@@ -12,7 +12,7 @@ class CallPage extends StatefulWidget {
   final String channelName;
 
   /// non-modifiable client role of the page
-  final ClientRole? role;
+  final ClientRole role;
 
   /// Creates a call page with given channel name.
   const CallPage({ Key? key, required this.channelName, required this.role}) : super(key: key);

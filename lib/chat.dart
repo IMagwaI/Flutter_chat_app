@@ -11,6 +11,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:agora_rtc_engine/rtc_engine.dart';
+import './call.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -130,6 +134,26 @@ class ChatScreenState extends State<ChatScreen> {
     setState(() {
       isShowSticker = !isShowSticker;
     });
+  }
+//Videos
+  Future<void> goToVideo() async {
+    await _handleCameraAndMic(Permission.camera);
+    await _handleCameraAndMic(Permission.microphone);
+    // push video page with given channel name
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CallPage(
+          channelName: "default",
+          role: ClientRole.Broadcaster,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleCameraAndMic(Permission permission) async {
+    final status = await permission.request();
+    print(status);
   }
 
   Future uploadFile() async {
@@ -593,6 +617,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget buildInput() {
     return Container(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           // Button send image
           Material(
@@ -612,6 +637,16 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.face),
                 onPressed: getSticker,
+                color: primaryColor,
+              ),
+            ),
+            color: Colors.white,
+          ),  Material(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              child: IconButton(
+                icon: Icon(Icons.video_call_outlined),
+                onPressed: goToVideo,
                 color: primaryColor,
               ),
             ),
