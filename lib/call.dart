@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
@@ -13,9 +13,19 @@ class CallPage extends StatefulWidget {
 
   /// non-modifiable client role of the page
   final ClientRole role;
+  final String groupChatId;
+  final String peerId;
+  final String id;
 
   /// Creates a call page with given channel name.
-  const CallPage({ Key? key, required this.channelName, required this.role}) : super(key: key);
+  const CallPage(
+      {Key? key,
+      required this.channelName,
+      required this.role,
+      required this.groupChatId,
+      required this.peerId,
+      required this.id})
+      : super(key: key);
 
   @override
   _CallPageState createState() => _CallPageState();
@@ -40,8 +50,35 @@ class _CallPageState extends State<CallPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.id == widget.channelName) {
+      onSendMessage("Click to join my video chatroom", 11);
+    }
     // initialize agora sdk
     initialize();
+  }
+
+  void onSendMessage(String content, int type) {
+    // type: 0 = text, 1 = image, 2 = sticker
+    if (content.trim() != '') {
+      var documentReference = FirebaseFirestore.instance
+          .collection('messages')
+          .doc(widget.groupChatId)
+          .collection(widget.groupChatId)
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(
+          documentReference,
+          {
+            'idFrom': widget.id,
+            'idTo': widget.peerId,
+            'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+            'content': content,
+            'type': type,
+          },
+        );
+      });
+    }
   }
 
   Future<void> initialize() async {
@@ -141,32 +178,32 @@ class _CallPageState extends State<CallPage> {
       case 1:
         return Container(
             child: Column(
-              children: <Widget>[_videoView(views[0])],
-            ));
+          children: <Widget>[_videoView(views[0])],
+        ));
       case 2:
         return Container(
             child: Column(
-              children: <Widget>[
-                _expandedVideoRow([views[0]]),
-                _expandedVideoRow([views[1]])
-              ],
-            ));
+          children: <Widget>[
+            _expandedVideoRow([views[0]]),
+            _expandedVideoRow([views[1]])
+          ],
+        ));
       case 3:
         return Container(
             child: Column(
-              children: <Widget>[
-                _expandedVideoRow(views.sublist(0, 2)),
-                _expandedVideoRow(views.sublist(2, 3))
-              ],
-            ));
+          children: <Widget>[
+            _expandedVideoRow(views.sublist(0, 2)),
+            _expandedVideoRow(views.sublist(2, 3))
+          ],
+        ));
       case 4:
         return Container(
             child: Column(
-              children: <Widget>[
-                _expandedVideoRow(views.sublist(0, 2)),
-                _expandedVideoRow(views.sublist(2, 4))
-              ],
-            ));
+          children: <Widget>[
+            _expandedVideoRow(views.sublist(0, 2)),
+            _expandedVideoRow(views.sublist(2, 4))
+          ],
+        ));
       default:
     }
     return Container();
@@ -236,7 +273,7 @@ class _CallPageState extends State<CallPage> {
             itemCount: _infoStrings.length,
             itemBuilder: (BuildContext context, int index) {
               if (_infoStrings.isEmpty) {
-              //  return null;
+                //  return null;
               }
               return Padding(
                 padding: const EdgeInsets.symmetric(
@@ -291,7 +328,7 @@ class _CallPageState extends State<CallPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agora Flutter QuickStart'),
+        title: Text('Calling'),
       ),
       backgroundColor: Colors.black,
       body: Center(
