@@ -11,6 +11,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:agora_rtc_engine/rtc_engine.dart';
+import './call.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -135,6 +139,29 @@ class ChatScreenState extends State<ChatScreen> {
     setState(() {
       isShowSticker = !isShowSticker;
     });
+  }
+//Videos
+  Future<void> goToVideo(id) async {
+    await _handleCameraAndMic(Permission.camera);
+    await _handleCameraAndMic(Permission.microphone);
+    // push video page with given channel name
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CallPage(
+          channelName:id!,
+          role: ClientRole.Broadcaster,
+          id:id!,
+          groupChatId:groupChatId,
+          peerId:peerId,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleCameraAndMic(Permission permission) async {
+    final status = await permission.request();
+    print(status);
   }
 
   Future uploadFile() async {
@@ -267,8 +294,21 @@ class ChatScreenState extends State<ChatScreen> {
                           style: ButtonStyle(padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(0))),
                         ),
                         margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-                      )
-                    // Sticker
+                      ):
+            document.get('type') == 11
+            // Text
+                ? Container(
+              child: Text(
+                document.get('content'),
+                style: TextStyle(color: primaryColor,
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+              width: 200.0,
+              decoration: BoxDecoration(color: greyColor2, borderRadius: BorderRadius.circular(8.0)),
+              margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
+            )
+            // Sticker
                     : Container(
                         child: Image.asset(
                           'images/${document.get('content')}.gif',
@@ -388,7 +428,28 @@ class ChatScreenState extends State<ChatScreen> {
                                 style: ButtonStyle(padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(0))),
                               ),
                               margin: EdgeInsets.only(left: 10.0),
-                            )
+                            ):
+                  document.get('type') == 11
+                      ? Container(
+                    child: new InkWell(
+                        child: Text(
+                          document.get('content'),
+                          style: TextStyle(color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        onTap: ()=>{
+                              goToVideo(document.get("idFrom"))}),
+                    padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                        color: greyColor2,
+                        borderRadius: BorderRadius.circular(8.0)),
+                    margin: EdgeInsets.only(
+                        bottom: isLastMessageRight(index) ? 20.0 : 10.0,
+                        right: 10.0),
+                  )
+
                           : Container(
                               child: Image.asset(
                                 'images/${document.get('content')}.gif',
@@ -598,6 +659,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget buildInput() {
     return Container(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           // Button send image
           Material(
@@ -617,6 +679,16 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.face),
                 onPressed: getSticker,
+                color: primaryColor,
+              ),
+            ),
+            color: Colors.white,
+          ),  Material(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              child: IconButton(
+                icon: Icon(Icons.video_call_outlined),
+                onPressed:() =>goToVideo(id),
                 color: primaryColor,
               ),
             ),

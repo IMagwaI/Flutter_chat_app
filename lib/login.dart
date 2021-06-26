@@ -76,7 +76,9 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<Null> handleSignIn() async {
+
+
+Future<Null> handleSignIn() async {
     prefs = await SharedPreferences.getInstance();
 
     this.setState(() {
@@ -163,12 +165,17 @@ class LoginScreenState extends State<LoginScreen> {
           ),
           centerTitle: true,
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 60),
-              child: Center(
+        body: Stack(
+          children: <Widget>[
+            Center(
+                child: new Column(children: [
+              TextButton(
+                onPressed: () => handleSignIn().catchError((err) {
+                  Fluttertoast.showToast(msg: err.toString());
+                  this.setState(() {
+                    isLoading = false;
+                  });
+                }),
                 child: Text(
                   "Phone Authentication",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
