@@ -688,7 +688,7 @@ class ChatScreenState extends State<ChatScreen> {
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
                 icon: Icon(Icons.video_call_outlined),
-                onPressed:() =>goToVideo(id),
+                onPressed:() =>goToVideo(ownid),
                 color: primaryColor,
               ),
             ),

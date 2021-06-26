@@ -166,16 +166,10 @@ Future<Null> handleSignIn() async {
           centerTitle: true,
         ),
         body: Stack(
-          children: <Widget>[
-            Center(
-                child: new Column(children: [
-              TextButton(
-                onPressed: () => handleSignIn().catchError((err) {
-                  Fluttertoast.showToast(msg: err.toString());
-                  this.setState(() {
-                    isLoading = false;
-                  });
-                }),
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 60),
+              child: Center(
                 child: Text(
                   "Phone Authentication",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
@@ -187,7 +181,7 @@ Future<Null> handleSignIn() async {
               child: TextField(
                 decoration: InputDecoration(
                     hintText: "Phone Number", prefix: Padding(padding: EdgeInsets.all(4),
-                child: Text("+212"),)
+                  child: Text("+212"),)
                 ),maxLength: 10,keyboardType: TextInputType.number,controller: _controller,
               ),
             ),
@@ -198,7 +192,7 @@ Future<Null> handleSignIn() async {
                 color: Colors.blue,
                 onPressed:(){
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) =>OTPScreen(_controller.text))
+                      MaterialPageRoute(builder: (context) =>OTPScreen(_controller.text))
                   );
                 } ,
                 child: Text('Next',style: TextStyle(color: Colors.white),),
@@ -220,7 +214,7 @@ Future<Null> handleSignIn() async {
                     ),
                     style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
+                        MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
                         padding: MaterialStateProperty.all<EdgeInsets>(
                             EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
                   ),
@@ -231,7 +225,7 @@ Future<Null> handleSignIn() async {
                 ),
               ],
             ),
-          ],
+          ]
         ));
   }
 }
