@@ -387,6 +387,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.1"
+  pinput:
+    dependency: "direct dev"
+    description:
+      name: pinput
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.6"
   platform:
     dependency: transitive
     description:

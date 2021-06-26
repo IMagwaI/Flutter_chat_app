@@ -11,6 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'otp.dart';
+
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key, required this.title}) : super(key: key);
 
@@ -24,6 +26,7 @@ class LoginScreenState extends State<LoginScreen> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SharedPreferences? prefs;
+  TextEditingController _controller = TextEditingController();
 
   bool isLoading = false;
   bool isLoggedIn = false;
@@ -32,9 +35,25 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    // AlreadySignedIn();
     isSignedIn();
   }
 
+  // void AlreadySignedIn() async {
+  //   prefs = await SharedPreferences.getInstance();
+  //   if (prefs?.getString('id') != null) {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) =>
+  //               HomeScreen(currentUserId: prefs!.getString('id') ?? "")),
+  //     );
+  //   }
+  //
+  //   this.setState(() {
+  //     isLoading = false;
+  //   });
+  // }
   void isSignedIn() async {
     this.setState(() {
       isLoading = true;
@@ -138,7 +157,8 @@ Future<Null> handleSignIn() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      resizeToAvoidBottomInset:false,
+      appBar: AppBar(
           title: Text(
             widget.title,
             style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
@@ -157,19 +177,59 @@ Future<Null> handleSignIn() async {
                   });
                 }),
                 child: Text(
-                  'SIGN IN WITH GOOGLE',
-                  style: TextStyle(fontSize: 16.0, color: Colors.white),
+                  "Phone Authentication",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                 ),
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
-                    padding: MaterialStateProperty.all<EdgeInsets>(
-                        EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
-              )
-            ])),
-            // Loading
-            Positioned(
-              child: isLoading ? const Loading() : Container(),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 40,right: 10,left: 10),
+              child: TextField(
+                decoration: InputDecoration(
+                    hintText: "Phone Number", prefix: Padding(padding: EdgeInsets.all(4),
+                child: Text("+212"),)
+                ),maxLength: 10,keyboardType: TextInputType.number,controller: _controller,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(10),
+              width: double.infinity,
+              child: FlatButton(
+                color: Colors.blue,
+                onPressed:(){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) =>OTPScreen(_controller.text))
+                  );
+                } ,
+                child: Text('Next',style: TextStyle(color: Colors.white),),
+              ),
+            ),
+            Stack(
+              children: <Widget>[
+                Center(
+                  child: TextButton(
+                    onPressed: () => handleSignIn().catchError((err) {
+                      Fluttertoast.showToast(msg: err.toString());
+                      this.setState(() {
+                        isLoading = false;
+                      });
+                    }),
+                    child: Text(
+                      'SIGN IN WITH GOOGLE',
+                      style: TextStyle(fontSize: 16.0, color: Colors.white),
+                    ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
+                        padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
+                  ),
+                ),
+                // Loading
+                Positioned(
+                  child: isLoading ? const Loading() : Container(),
+                ),
+              ],
             ),
           ],
         ));

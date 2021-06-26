@@ -13,6 +13,7 @@ import 'package:chat_app/widget/loading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 import 'main.dart';
@@ -34,6 +35,7 @@ class HomeScreenState extends State<HomeScreen> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final ScrollController listScrollController = ScrollController();
+  SharedPreferences? prefs;
 
   int _limit = 20;
   int _limitIncrement = 20;
@@ -46,9 +48,12 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    print(" hada uid diali" + currentUserId);
     registerNotification();
     configLocalNotification();
     listScrollController.addListener(scrollListener);
+    // prefs!.setString("id", currentUserId);
+
   }
 
   void registerNotification() {
@@ -91,7 +96,7 @@ class HomeScreenState extends State<HomeScreen> {
     if (choice.title == 'Log out') {
       handleSignOut();
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));
     }
   }
 
@@ -212,9 +217,10 @@ class HomeScreenState extends State<HomeScreen> {
     this.setState(() {
       isLoading = true;
     });
-
     await FirebaseAuth.instance.signOut();
-    await googleSignIn.disconnect();
+    await prefs?.clear();
+
+    // await googleSignIn.disconnect();
     await googleSignIn.signOut();
 
     this.setState(() {
@@ -383,6 +389,7 @@ class HomeScreenState extends State<HomeScreen> {
                   builder: (context) => Chat(
                     peerId: userChat.id,
                     peerAvatar: userChat.photoUrl,
+                    ownid: currentUserId,
                   ),
                 ),
               );
