@@ -113,7 +113,9 @@ Future<Null> handleSignIn() async {
             'photoUrl': firebaseUser.photoURL,
             'id': firebaseUser.uid,
             'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-            'chattingWith': null
+            'chattingWith': null,
+            'conversations':[]
+
           });
 
           // Write data to local
@@ -171,7 +173,7 @@ Future<Null> handleSignIn() async {
               margin: EdgeInsets.only(top: 60),
               child: Center(
                 child: Text(
-                  "Phone Authentication",
+                  "",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                 ),
               ),
