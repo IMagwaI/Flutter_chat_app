@@ -1,7 +1,12 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:meta/meta.dart';
+import 'dart:convert';
+import 'package:chat_app/Notifs/Notifications';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/const.dart';
@@ -11,6 +16,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:http/http.dart' as http;
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -56,7 +63,7 @@ class ChatScreenState extends State<ChatScreen> {
   String peerAvatar;
   String? id;
   String ownid;
-
+  String? token="",prenom="";
   List<QueryDocumentSnapshot> listMessage = new List.from([]);
   int _limit = 20;
   int _limitIncrement = 20;
@@ -71,6 +78,10 @@ class ChatScreenState extends State<ChatScreen> {
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
+
+  final FirebaseMessaging fcm = FirebaseMessaging.instance;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+
 
   _scrollListener() {
     if (listScrollController.offset >= listScrollController.position.maxScrollExtent &&
@@ -157,7 +168,7 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void onSendMessage(String content, int type) {
+  Future<void> onSendMessage(String content, int type) async {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
@@ -180,6 +191,15 @@ class ChatScreenState extends State<ChatScreen> {
           },
         );
       });
+
+       prenom=(prefs?.getString('nickname'))!;
+       print('$prenom HADA PRENOM DYALI');
+      String? photo=prefs?.getString('photoUrl');
+      await FirebaseFirestore.instance.collection("users").doc(peerId).get().then((value){
+        token=value.get("pushToken");
+        print('$token HADA token dyal the person m talking ot');
+      });
+       NotificationController.instance.sendNotificationMessage(type,content,prenom,token,photo);
       listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send', backgroundColor: Colors.black, textColor: Colors.red);

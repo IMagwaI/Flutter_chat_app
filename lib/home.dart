@@ -12,10 +12,13 @@ import 'package:chat_app/settings.dart';
 import 'package:chat_app/widget/loading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 import 'main.dart';
+import 'DarkMode/DarkThemeProvider.dart';
 
 class HomeScreen extends StatefulWidget {
   final String currentUserId;
@@ -34,6 +37,7 @@ class HomeScreenState extends State<HomeScreen> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final ScrollController listScrollController = ScrollController();
+  //final themeProvider = Provider.of<DarkThemeProvider>(context);
   SharedPreferences? prefs;
 
   int _limit = 20;
@@ -42,6 +46,7 @@ class HomeScreenState extends State<HomeScreen> {
   List<Choice> choices = const <Choice>[
     const Choice(title: 'Settings', icon: Icons.settings),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
+    const Choice(title: 'Appearance', icon: Icons.light_mode)
   ];
 
   @override
@@ -88,14 +93,6 @@ class HomeScreenState extends State<HomeScreen> {
       setState(() {
         _limit += _limitIncrement;
       });
-    }
-  }
-
-  void onItemMenuPress(Choice choice) {
-    if (choice.title == 'Log out') {
-      handleSignOut();
-    } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));
     }
   }
 
@@ -232,6 +229,60 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<DarkThemeProvider>(context);
+    void onItemMenuPress(Choice choice) {
+      /*if (choice.title == 'Log out') {
+      handleSignOut();
+    } else {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));
+    }*/
+      switch(choice.title) {
+        case 'Log out': {
+          handleSignOut();
+        }
+        break;
+
+        case 'Setting': {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));;
+        }
+        break;
+        case 'Appearance': {
+          Alert(
+            context: context,
+            type: AlertType.none,
+            title: "Appearance",
+            desc: "",
+            buttons: [
+              DialogButton(
+                  child: Text(
+                    "Dark",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () => { themeProvider.darkTheme = true,
+                    Navigator.pop(context),},
+                  width: 60,
+                  color: Colors.black
+              ),
+              DialogButton(
+                child: Text(
+                  "Light",
+                  style: TextStyle(color: Colors.black87, fontSize: 20),
+                ),
+                onPressed: () => {themeProvider.darkTheme = false,
+                  Navigator.pop(context),},
+                width: 60,
+                color: Colors.yellowAccent,
+              )
+            ],
+          ).show();
+        }
+        break;
+        default: {
+          //statements;
+        }
+        break;
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -250,7 +301,7 @@ class HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         Icon(
                           choice.icon,
-                          color: primaryColor,
+                          color: Theme.of(context).backgroundColor,
                         ),
                         Container(
                           width: 10.0,

@@ -1,0 +1,127 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+
+class NotificationController {
+  static const String serverKey='AAAAbc0dags:APA91bE15eHdDJsTAiB5tXmOy-aByiBhV3epdyY8IJ4JEgLiiNt5QyBDAqJu4O4MMvFJJJ57Eynt-1Y3zprirBGHSMb2UIiOMExV96M2lT44989AB6TGdUG1MrViGz8SjJe1tpUJoDsR';
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  static NotificationController get instance => NotificationController();
+
+  Future takeFCMTokenWhenAppLaunch() async {
+    try{
+      NotificationSettings settings = await _firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        print('User granted permission');
+      } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+        print('User granted provisional permission');
+      } else {
+        print('User declined or has not accepted permission');
+      }
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        print('A new onMessageOpenedApp event was published!');
+        // Navigator.pushNamed(context, '/message',
+        //     arguments: MessageArguments(message, true));
+      });
+    }catch(e) {
+      print(e);
+    }
+  }
+
+
+  Future initLocalNotification() async{
+    if (Platform.isIOS ) {
+      // set iOS Local notification.
+      var initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+      var initializationSettingsIOS = IOSInitializationSettings(
+        requestSoundPermission: true,
+        requestBadgePermission: true,
+        requestAlertPermission: true,
+        onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
+      );
+      var initializationSettings = InitializationSettings(
+          android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+      await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+          onSelectNotification: _selectNotification);
+    }else {
+      var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+      var initializationSettingsIOS = IOSInitializationSettings(
+          onDidReceiveLocalNotification: _onDidReceiveLocalNotification);
+      var initializationSettings = InitializationSettings(
+          android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+      await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+          onSelectNotification: _selectNotification);
+    }
+  }
+
+  Future _onDidReceiveLocalNotification(int id, String? title, String? body, String? payload) async { }
+
+  Future _selectNotification(String? payload) async { }
+
+  Future<void> sendNotificationMessage(messageType,textFromTextField,myName,peerUserToken,myImageUrl) async {
+    // FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    try{
+      print('NOTIF SENT');
+      final response= await http.post(
+        // 'https://fcm.googleapis.com/fcm/send',
+        // 'https://api.rnfirebase.io/messaging/send',
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'key=$serverKey',
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'notification': <String, dynamic>{
+              'body': messageType == 0 ? '$textFromTextField' : ( messageType==2? '(Sticker)':'(Photo)'),
+              'title': '$myName',
+              "sound" : "default",
+              "image" : myImageUrl
+            },
+            // 'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'id': '1',
+              'status': 'done',
+              'userImage':myImageUrl,
+              'userName':'$myName',
+              'message': messageType == 0 ? '$textFromTextField' : ( messageType==2? '(Sticker)':'(Photo)'),
+            },
+            'to': peerUserToken,
+          },
+        ),
+      );
+
+    if (response.statusCode == 200) {
+    // on success do sth
+    print('NOTIF SENT SUCCESSFULLY');
+    } else {
+    print(' FCM ERRR');
+    // on failure do sth
+    }
+      print("notif seeeent2");
+    } catch (e) {
+      print(e);
+      print('IL Y AEU UNE ERREUR');
+    }
+  }
+}
