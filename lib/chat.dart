@@ -112,11 +112,50 @@ class ChatScreenState extends State<ChatScreen> {
       groupChatId = '$peerId-$ownid';
     }
 
+
     FirebaseFirestore.instance.collection('users').doc(ownid).update({'chattingWith': peerId});
 
     setState(() {});
-  }
+    editDB();
 
+  }
+  editDB() async{
+    var convdocumentReference = FirebaseFirestore.instance
+        .collection('conversation')
+        .doc(groupChatId);
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.set(
+        convdocumentReference,
+        {
+          'id':groupChatId,
+          'users': [id,peerId],
+          'group': 0,
+        },
+      );
+    });
+
+    /// adding  groupChatId to conversations variables
+    var querySnapshot1 = await FirebaseFirestore.instance.collection('users').doc(id).get();
+    var querySnapshot2 = await FirebaseFirestore.instance.collection('users').doc(peerId).get();
+    print('////////////////////////////////////////////////////////////////////////////');
+    var i =true;
+
+    List<String> conversations = List.from(querySnapshot1["conversations"]);
+    List<String> conversations2 = List.from(querySnapshot2["conversations"]);
+    print(conversations);
+    for (var k in conversations){
+      if(k==groupChatId){
+        i=false;
+      }
+    }
+    if(i == true){
+      conversations.add(groupChatId);
+      conversations2.add(groupChatId);
+      FirebaseFirestore.instance.collection('users').doc(id).update({'conversations': conversations});
+      FirebaseFirestore.instance.collection('users').doc(peerId).update({'conversations': conversations2});
+
+    }
+  }
   Future getImage() async {
     ImagePicker imagePicker = ImagePicker();
     PickedFile? pickedFile;
@@ -195,11 +234,13 @@ class ChatScreenState extends State<ChatScreen> {
           .collection(groupChatId)
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
 
+
       FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(
           documentReference,
           {
-            'idFrom': ownid,
+            'idFrom': id,
+            'cnvTo': groupChatId,
             'idTo': peerId,
             'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
             'content': content,

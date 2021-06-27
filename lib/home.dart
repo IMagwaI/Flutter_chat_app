@@ -16,6 +16,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
+import 'contact.dart';
+import 'groupchat.dart';
 import 'main.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +34,8 @@ class HomeScreenState extends State<HomeScreen> {
 
   final String currentUserId;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final ScrollController listScrollController = ScrollController();
   SharedPreferences? prefs;
@@ -69,22 +72,28 @@ class HomeScreenState extends State<HomeScreen> {
 
     firebaseMessaging.getToken().then((token) {
       print('token: $token');
-      FirebaseFirestore.instance.collection('users').doc(currentUserId).update({'pushToken': token});
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .update({'pushToken': token});
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
     });
   }
 
   void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+    IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void scrollListener() {
-    if (listScrollController.offset >= listScrollController.position.maxScrollExtent &&
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
         !listScrollController.position.outOfRange) {
       setState(() {
         _limit += _limitIncrement;
@@ -96,13 +105,17 @@ class HomeScreenState extends State<HomeScreen> {
     if (choice.title == 'Log out') {
       handleSignOut();
     } else {
+
       Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));
     }
   }
 
   void showNotification(RemoteNotification remoteNotification) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.dfa.flutterchatdemo' : 'com.duytq.flutterchatdemo',
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      Platform.isAndroid
+          ? 'com.dfa.flutterchatdemo'
+          : 'com.duytq.flutterchatdemo',
       'INPT Spicy Chat',
       'Express yourselves freely ',
       playSound: true,
@@ -110,9 +123,11 @@ class HomeScreenState extends State<HomeScreen> {
       importance: Importance.max,
       priority: Priority.high,
     );
-    IOSNotificationDetails iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    IOSNotificationDetails iOSPlatformChannelSpecifics =
+        IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
 
     print(remoteNotification);
 
@@ -135,7 +150,8 @@ class HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            contentPadding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
+            contentPadding:
+                EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
             children: <Widget>[
               Container(
                 color: themeColor,
@@ -154,7 +170,10 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       'Exit app',
-                      style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Are you sure to exit app?',
@@ -178,7 +197,8 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       'CANCEL',
-                      style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: primaryColor, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -198,7 +218,8 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       'YES',
-                      style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: primaryColor, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -227,8 +248,9 @@ class HomeScreenState extends State<HomeScreen> {
       isLoading = false;
     });
 
-    Navigator.of(context)
-        .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MyApp()), (Route<dynamic> route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MyApp()),
+        (Route<dynamic> route) => false);
   }
 
   @override
@@ -273,15 +295,26 @@ class HomeScreenState extends State<HomeScreen> {
             // List
             Container(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('users').limit(_limit).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .where('id', isEqualTo: currentUserId)
+                    .snapshots(),
+                builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    //UserChat userChat = UserChat.fromDocument(snapshot.data!.docs[1]);
+                    var cnv = snapshot.data!.docs[0].get('conversations');
+
+                    if(cnv.isNotEmpty){
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
-                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) =>
+                          buildItem(context, cnv[index]),
+                      itemCount: cnv.length,
                       controller: listScrollController,
                     );
+                    }else{
+                      return Image.asset("images/noconvfound.png");
+                    }
                   } else {
                     return Center(
                       child: CircularProgressIndicator(
@@ -292,7 +325,6 @@ class HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-
             // Loading
             Positioned(
               child: isLoading ? const Loading() : Container(),
@@ -301,114 +333,235 @@ class HomeScreenState extends State<HomeScreen> {
         ),
         onWillPop: onBackPress,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ContactScreen(currentUserId: currentUserId)
+              )
+          );
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot? document) {
-    if (document != null) {
-      UserChat userChat = UserChat.fromDocument(document);
-      if (userChat.id == currentUserId) {
-        return SizedBox.shrink();
-      } else {
-        return Container(
-          child: TextButton(
-            child: Row(
-              children: <Widget>[
-                Material(
-                  child: userChat.photoUrl.isNotEmpty
-                      ? Image.network(
-                          userChat.photoUrl,
-                          fit: BoxFit.cover,
-                          width: 50.0,
-                          height: 50.0,
-                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              width: 50,
-                              height: 50,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: primaryColor,
-                                  value: loadingProgress.expectedTotalBytes != null &&
-                                          loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, object, stackTrace) {
-                            return Icon(
-                              Icons.account_circle,
-                              size: 50.0,
-                              color: greyColor,
-                            );
-                          },
-                        )
-                      : Icon(
-                          Icons.account_circle,
-                          size: 50.0,
-                          color: greyColor,
-                        ),
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                  clipBehavior: Clip.hardEdge,
-                ),
-                Flexible(
-                  child: Container(
-                    child: Column(
+  Widget buildItem(BuildContext context, String conversation) {
+    return Container(
+        child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('conversation')
+                .where('id', isEqualTo: conversation)
+                .snapshots(),
+            builder: (context, snapshot) {
+              var user = '';
+              List<dynamic> users;
+              var boolGroup=0;
+              var groupName="";
+              try {
+                users = snapshot.data!.docs[0].get('users');
+                boolGroup = snapshot.data!.docs[0].get('group');
+
+                for (int k = 0; k < users.length; k++) {
+                  if (users[k] != currentUserId) user = users[k];
+                }
+              } catch (e) {
+                print(e);
+              }
+
+              if(boolGroup==1){
+                groupName = snapshot.data!.docs[0].get('title');
+                return Container(
+                  child: TextButton(
+                    child: Row(
                       children: <Widget>[
-                        Container(
-                          child: Text(
-                            'Nickname: ${userChat.nickname}',
-                            maxLines: 1,
-                            style: TextStyle(color: primaryColor),
+                        Material(
+                          child: Image.asset("images/group.png",
+                            width: 50.0,
+                            height: 50.0,
                           ),
-                          alignment: Alignment.centerLeft,
-                          margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(25.0)),
+                          clipBehavior: Clip.hardEdge,
                         ),
-                        Container(
-                          child: Text(
-                            'About me: ${userChat.aboutMe}',
-                            maxLines: 1,
-                            style: TextStyle(color: primaryColor),
+                        Flexible(
+                          child: Container(
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  child: Text(
+                                    groupName,
+                                    maxLines: 1,
+                                    style:
+                                    TextStyle(color: primaryColor),
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                  margin: EdgeInsets.fromLTRB(
+                                      10.0, 0.0, 0.0, 5.0),
+                                ),
+                              ],
+                            ),
+                            margin: EdgeInsets.only(left: 20.0),
                           ),
-                          alignment: Alignment.centerLeft,
-                          margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                        )
+                        ),
                       ],
                     ),
-                    margin: EdgeInsets.only(left: 20.0),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GroupChat(convId: snapshot.data!.docs[0].get('id').toString(),users:snapshot.data!.docs[0].get('users'),title:groupName),
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                      MaterialStateProperty.all<Color>(greyColor2),
+                      shape: MaterialStateProperty.all<OutlinedBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                    ),
+
                   ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Chat(
-                    peerId: userChat.id,
-                    peerAvatar: userChat.photoUrl,
-                    ownid: currentUserId,
-                  ),
-                ),
+                  margin: EdgeInsets.only(
+                      bottom: 10.0, left: 5.0, right: 5.0),
+                );
+              }else{
+                return StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .where("id", isEqualTo: user)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  try {
+                    UserChat userChat =
+                        UserChat.fromDocument(snapshot.data!.docs[0]);
+                    if (userChat.nickname != "") {
+                      if (userChat.id == currentUserId) {
+                        return SizedBox.shrink();
+                      } else {
+                        return Container(
+                          child: TextButton(
+                            child: Row(
+                              children: <Widget>[
+                                Material(
+                                  child: userChat.photoUrl.isNotEmpty
+                                      ? Image.network(
+                                          userChat.photoUrl,
+                                          fit: BoxFit.cover,
+                                          width: 50.0,
+                                          height: 50.0,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Container(
+                                              width: 50,
+                                              height: 50,
+                                              child: Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: primaryColor,
+                                                  value: loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null &&
+                                                          loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          errorBuilder:
+                                              (context, object, stackTrace) {
+                                            return Icon(
+                                              Icons.account_circle,
+                                              size: 50.0,
+                                              color: greyColor,
+                                            );
+                                          },
+                                        )
+                                      : Icon(
+                                          Icons.account_circle,
+                                          size: 50.0,
+                                          color: greyColor,
+                                        ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(25.0)),
+                                  clipBehavior: Clip.hardEdge,
+                                ),
+                                Flexible(
+                                  child: Container(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          child: Text(
+                                            '${userChat.nickname}',
+                                            maxLines: 1,
+                                            style:
+                                                TextStyle(color: primaryColor),
+                                          ),
+                                          alignment: Alignment.centerLeft,
+                                          margin: EdgeInsets.fromLTRB(
+                                              10.0, 0.0, 0.0, 5.0),
+                                        ),
+                                      ],
+                                    ),
+                                    margin: EdgeInsets.only(left: 20.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Chat(
+                                    ownid: currentUserId,
+                                    peerId: userChat.id,
+                                    peerAvatar: userChat.photoUrl,
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all<Color>(greyColor2),
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          margin: EdgeInsets.only(
+                              bottom: 10.0, left: 5.0, right: 5.0),
+                        );
+                      }
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  } catch (e) {
+                    print(e);
+                    return SizedBox.shrink();
+                  }
+                },
               );
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(greyColor2),
-              shape: MaterialStateProperty.all<OutlinedBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-              ),
-            ),
-          ),
-          margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
-        );
-      }
-    } else {
-      return SizedBox.shrink();
-    }
+              }
+            }));
   }
 }
 
