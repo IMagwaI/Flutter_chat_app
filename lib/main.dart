@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'login.dart';
 import 'DarkMode/DarkThemeProvider.dart';
 import 'package:provider/provider.dart';
+import 'Notifs/Notifications';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
@@ -33,6 +34,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getCurrentAppTheme();
+    NotificationController.instance.initLocalNotification();
   }
 
   void getCurrentAppTheme() async {

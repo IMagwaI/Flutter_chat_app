@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 abstract class Styles {
   //colors
   //dyal app
-  static const themeColor = Color(0xfff5a623);
+  static const themeColor = Color(0xff9106ad);
   static const primaryColor = Color(0xff203152);
   static const greyColor = Color(0xffaeaeae);
   static const greyColor2 = Color(0xffE8E8E8);
-
-
   static const Color whiteColor = Color(0xffffffff);
   static const Color blackColor = Color(0xff0000000);
   static const Color orangeColor = Colors.orange;
@@ -99,7 +97,7 @@ abstract class Styles {
 
       focusColor: isDarkTheme ? Color(0xff0B2512) : Color(0xffA8DAB5),
       disabledColor: Colors.grey,
-      textSelectionColor: isDarkTheme ? Colors.white : Colors.black,
+      //textSelectionThemeData.textColor: isDarkTheme ? Colors.white : Colors.black,
       cardColor: isDarkTheme ? Color(0xFF151515) : Colors.white,
       canvasColor: isDarkTheme ? Colors.black : Colors.grey[50],
       brightness: isDarkTheme ? Brightness.dark : Brightness.light,

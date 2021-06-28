@@ -310,7 +310,7 @@ class ChatScreenState extends State<ChatScreen> {
         });
   }
 
-  void onSendMessage(String content, int type) {
+  void onSendMessage(String content, int type) async {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
@@ -477,14 +477,14 @@ class ChatScreenState extends State<ChatScreen> {
                                 child: Text(
                                   document.get('content'),
                                   style: TextStyle(
-                                    color: primaryColor,
+                                    color: Styles.primaryColor,
                                   ),
                                 ),
                                 padding:
                                     EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                                 width: 200.0,
                                 decoration: BoxDecoration(
-                                    color: greyColor2,
+                                    color: Styles.greyColor2,
                                     borderRadius: BorderRadius.circular(8.0)),
                                 margin: EdgeInsets.only(
                                     bottom:
@@ -668,7 +668,7 @@ class ChatScreenState extends State<ChatScreen> {
                                           15.0, 10.0, 15.0, 10.0),
                                       width: 200.0,
                                       decoration: BoxDecoration(
-                                          color: greyColor2,
+                                          color: Styles.greyColor2,
                                           borderRadius:
                                               BorderRadius.circular(8.0)),
                                       margin: EdgeInsets.only(
@@ -920,7 +920,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.attach_file),
                 onPressed: showAttachmentBottomSheet,
-                color: primaryColor,
+                color: Styles.primaryColor,
               ),
             ),
             color: Colors.white,

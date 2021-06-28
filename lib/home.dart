@@ -441,7 +441,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     groupName,
                                     maxLines: 1,
                                     style:
-                                    TextStyle(color: primaryColor),
+                                    TextStyle(color: Styles.primaryColor),
                                   ),
                                   alignment: Alignment.centerLeft,
                                   margin: EdgeInsets.fromLTRB(
@@ -464,7 +464,7 @@ class HomeScreenState extends State<HomeScreen> {
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                      MaterialStateProperty.all<Color>(greyColor2),
+                      MaterialStateProperty.all<Color>(Styles.greyColor2),
                       shape: MaterialStateProperty.all<OutlinedBorder>(
                         RoundedRectangleBorder(
                           borderRadius:
@@ -514,7 +514,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               child: Center(
                                                 child:
                                                     CircularProgressIndicator(
-                                                  color: primaryColor,
+                                                  color: Styles.primaryColor,
                                                   value: loadingProgress
                                                                   .expectedTotalBytes !=
                                                               null &&
@@ -535,14 +535,14 @@ class HomeScreenState extends State<HomeScreen> {
                                             return Icon(
                                               Icons.account_circle,
                                               size: 50.0,
-                                              color: greyColor,
+                                              color: Styles.greyColor,
                                             );
                                           },
                                         )
                                       : Icon(
                                           Icons.account_circle,
                                           size: 50.0,
-                                          color: greyColor,
+                                          color: Styles.greyColor,
                                         ),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(25.0)),
@@ -557,7 +557,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             '${userChat.nickname}',
                                             maxLines: 1,
                                             style:
-                                                TextStyle(color: primaryColor),
+                                                TextStyle(color: Styles.primaryColor),
                                           ),
                                           alignment: Alignment.centerLeft,
                                           margin: EdgeInsets.fromLTRB(
@@ -584,7 +584,7 @@ class HomeScreenState extends State<HomeScreen> {
                             },
                             style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all<Color>(greyColor2),
+                                  MaterialStateProperty.all<Color>(Styles.greyColor2),
                               shape: MaterialStateProperty.all<OutlinedBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius:

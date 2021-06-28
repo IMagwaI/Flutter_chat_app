@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/const.dart';
+import 'package:chat_app/DarkMode/ThemeData.dart';
 import 'package:chat_app/widget/full_photo.dart';
 import 'package:chat_app/widget/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,7 +30,7 @@ class GroupChat extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           title,
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -254,12 +254,12 @@ class ChatScreenState extends State<ChatScreen> {
                 ? Container(
                     child: Text(
                       document.get('content'),
-                      style: TextStyle(color: primaryColor),
+                      style: TextStyle(color: Styles.primaryColor),
                     ),
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     width: 200.0,
                     decoration: BoxDecoration(
-                        color: greyColor2,
+                        color: Styles.greyColor2,
                         borderRadius: BorderRadius.circular(8.0)),
                     margin: EdgeInsets.only(
                         bottom: isLastMessageRight(index) ? 20.0 : 10.0,
@@ -278,7 +278,7 @@ class ChatScreenState extends State<ChatScreen> {
                                 if (loadingProgress == null) return child;
                                 return Container(
                                   decoration: BoxDecoration(
-                                    color: greyColor2,
+                                    color: Styles.greyColor2,
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
@@ -287,7 +287,7 @@ class ChatScreenState extends State<ChatScreen> {
                                   height: 200.0,
                                   child: Center(
                                     child: CircularProgressIndicator(
-                                      color: primaryColor,
+                                      color: Styles.primaryColor,
                                       value:
                                           loadingProgress.expectedTotalBytes !=
                                                       null &&
@@ -390,14 +390,14 @@ class ChatScreenState extends State<ChatScreen> {
                                           return child;
                                         return Container(
                                           decoration: BoxDecoration(
-                                            color: greyColor2,
+                                            color: Styles.greyColor2,
                                             borderRadius: BorderRadius.all(
                                               Radius.circular(8.0),
                                             ),
                                           ),
                                           child: Center(
                                             child: CircularProgressIndicator(
-                                              color: primaryColor,
+                                              color: Styles.primaryColor,
                                               value: loadingProgress
                                                               .expectedTotalBytes !=
                                                           null &&
@@ -445,7 +445,7 @@ class ChatScreenState extends State<ChatScreen> {
                                         15.0, 10.0, 15.0, 10.0),
                                     width: 200.0,
                                     decoration: BoxDecoration(
-                                        color: primaryColor,
+                                        color: Styles.primaryColor,
                                         borderRadius:
                                             BorderRadius.circular(8.0)),
                                     margin: EdgeInsets.only(left: 10.0),
@@ -465,7 +465,7 @@ class ChatScreenState extends State<ChatScreen> {
                                                   return child;
                                                 return Container(
                                                   decoration: BoxDecoration(
-                                                    color: greyColor2,
+                                                    color: Styles.greyColor2,
                                                     borderRadius:
                                                         BorderRadius.all(
                                                       Radius.circular(8.0),
@@ -476,7 +476,7 @@ class ChatScreenState extends State<ChatScreen> {
                                                   child: Center(
                                                     child:
                                                         CircularProgressIndicator(
-                                                      color: primaryColor,
+                                                      color: Styles.primaryColor,
                                                       value: loadingProgress
                                                                       .expectedTotalBytes !=
                                                                   null &&
@@ -557,7 +557,7 @@ class ChatScreenState extends State<ChatScreen> {
                                           int.parse(
                                               document.get('timestamp')))),
                                   style: TextStyle(
-                                      color: greyColor,
+                                      color: Styles.greyColor,
                                       fontSize: 12.0,
                                       fontStyle: FontStyle.italic),
                                 ),
@@ -742,7 +742,7 @@ class ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         ),
         decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: greyColor2, width: 0.5)),
+            border: Border(top: BorderSide(color: Styles.greyColor2, width: 0.5)),
             color: Colors.white),
         padding: EdgeInsets.all(5.0),
         height: 180.0,
@@ -767,7 +767,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.image),
                 onPressed: getImage,
-                color: primaryColor,
+                color: Styles.primaryColor,
               ),
             ),
             color: Colors.white,
@@ -778,7 +778,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.face),
                 onPressed: getSticker,
-                color: primaryColor,
+                color: Styles.primaryColor,
               ),
             ),
             color: Colors.white,
@@ -791,11 +791,11 @@ class ChatScreenState extends State<ChatScreen> {
                 onSubmitted: (value) {
                   onSendMessage(textEditingController.text, 0);
                 },
-                style: TextStyle(color: primaryColor, fontSize: 15.0),
+                style: TextStyle(color: Styles.primaryColor, fontSize: 15.0),
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Type your message...',
-                  hintStyle: TextStyle(color: greyColor),
+                  hintStyle: TextStyle(color: Styles.greyColor),
                 ),
                 focusNode: focusNode,
               ),
@@ -809,7 +809,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.send),
                 onPressed: () => onSendMessage(textEditingController.text, 0),
-                color: primaryColor,
+                color: Styles.primaryColor,
               ),
             ),
             color: Colors.white,
@@ -819,7 +819,7 @@ class ChatScreenState extends State<ChatScreen> {
       width: double.infinity,
       height: 50.0,
       decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: greyColor2, width: 0.5)),
+          border: Border(top: BorderSide(color: Styles.greyColor2, width: 0.5)),
           color: Colors.white),
     );
   }
@@ -850,7 +850,7 @@ class ChatScreenState extends State<ChatScreen> {
                 } else {
                   return Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryColor),
                     ),
                   );
                 }
@@ -858,7 +858,7 @@ class ChatScreenState extends State<ChatScreen> {
             )
           : Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryColor),
               ),
             ),
     );
