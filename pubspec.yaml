@@ -55,6 +55,16 @@ dev_dependencies:
   flutter_local_notifications: 5.0.0+4
   photo_view: 0.11.1
   multi_select_flutter: ^4.0.0
+  google_fonts: ^2.1.0
+  flutter_launcher_icons:
+  file_picker: ^1.4.0+1
+  emoji_picker: ^0.0.2
+  video_player: ^2.1.6
+  flutter_downloader: ^1.2.2
+  downloads_path_provider: ^0.1.0
+  flushbar: ^1.9.0
+  chewie:
+
 
 #  stream_chat_flutter: ^1.5.0
 
@@ -69,6 +79,10 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_icons:
+  image_path: "images/logo.png"
+  android: true
+  ios: true
 
 # The following section is specific to Flutter.
 flutter:
@@ -87,3 +101,5 @@ flutter:
     - images/mimi9.gif
     - images/group.png
     - images/noconvfound.png
+    - images/logo.png
+    - images/bg.png

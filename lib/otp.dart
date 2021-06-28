@@ -140,7 +140,8 @@ class _OTPScreenState extends State<OTPScreen> {
                   'photoUrl': "https://centrecharlesemileclaude.ca/wp-content/uploads/2019/01/avatar-grey-blue.png",
                   'id': value.user!.uid,
                   'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-                  'chattingWith': null
+                  'chattingWith': null,
+                  'conversations':[]
                 });
 
                 // Write data to local

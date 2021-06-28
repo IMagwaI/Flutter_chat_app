@@ -14,6 +14,7 @@ import 'package:chat_app/widget/loading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main.dart';
 
@@ -34,7 +35,7 @@ class ContactScreenState extends State<ContactScreen> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final ScrollController listScrollController = ScrollController();
-
+  SharedPreferences? prefs;
   int _limit = 20;
   int _limitIncrement = 20;
   bool isLoading = false;
@@ -128,17 +129,19 @@ class ContactScreenState extends State<ContactScreen> {
     this.setState(() {
       isLoading = true;
     });
-
     await FirebaseAuth.instance.signOut();
-    await googleSignIn.disconnect();
+    await prefs?.clear();
+
+    // await googleSignIn.disconnect();
     await googleSignIn.signOut();
 
     this.setState(() {
       isLoading = false;
     });
 
-    Navigator.of(context)
-        .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MyApp()), (Route<dynamic> route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MyApp()),
+            (Route<dynamic> route) => false);
   }
 
   createAlertDialog(BuildContext context) {
