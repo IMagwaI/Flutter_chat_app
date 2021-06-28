@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:meta/meta.dart';
-import 'dart:convert';
 import 'package:chat_app/Notifs/Notifications';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'DarkMode/ThemeData.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/const.dart';
 import 'package:chat_app/widget/full_photo.dart';
 import 'package:chat_app/widget/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -32,7 +30,7 @@ class Chat extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'CHAT',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -64,6 +62,7 @@ class ChatScreenState extends State<ChatScreen> {
   String? id;
   String ownid;
   String? token="",prenom="";
+  String chattingWith="";
   List<QueryDocumentSnapshot> listMessage = new List.from([]);
   int _limit = 20;
   int _limitIncrement = 20;
@@ -191,15 +190,24 @@ class ChatScreenState extends State<ChatScreen> {
           },
         );
       });
-
-       prenom=(prefs?.getString('nickname'))!;
-       print('$prenom HADA PRENOM DYALI');
-      String? photo=prefs?.getString('photoUrl');
-      await FirebaseFirestore.instance.collection("users").doc(peerId).get().then((value){
-        token=value.get("pushToken");
-        print('$token HADA token dyal the person m talking ot');
+//Notif
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(peerId)
+          .get()
+          .then((value) {
+        chattingWith = value.get("chattingWith");
+        print('$chattingWith the person the peerid is talking to');
+        token = value.get("pushToken");
+        print('$token peerids token');
       });
-       NotificationController.instance.sendNotificationMessage(type,content,prenom,token,photo);
+         if (ownid != chattingWith ) {
+        prenom = (prefs?.getString('nickname'))!;
+        print('$prenom HADA PRENOM DYALI');
+        String? photo = prefs?.getString('photoUrl');
+        NotificationController.instance
+            .sendNotificationMessage(type, content, prenom, token, photo);
+      }
       listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send', backgroundColor: Colors.black, textColor: Colors.red);
@@ -217,11 +225,11 @@ class ChatScreenState extends State<ChatScreen> {
                 ? Container(
                     child: Text(
                       document.get('content'),
-                      style: TextStyle(color: primaryColor),
+                      style: TextStyle(color: Styles.primaryColor),
                     ),
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     width: 200.0,
-                    decoration: BoxDecoration(color: greyColor2, borderRadius: BorderRadius.circular(8.0)),
+                    decoration: BoxDecoration(color: Styles.greyColor2, borderRadius: BorderRadius.circular(8.0)),
                     margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
                   )
                 : document.get('type') == 1
@@ -235,7 +243,7 @@ class ChatScreenState extends State<ChatScreen> {
                                 if (loadingProgress == null) return child;
                                 return Container(
                                   decoration: BoxDecoration(
-                                    color: greyColor2,
+                                    color: Styles.greyColor2,
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
@@ -244,7 +252,7 @@ class ChatScreenState extends State<ChatScreen> {
                                   height: 200.0,
                                   child: Center(
                                     child: CircularProgressIndicator(
-                                      color: primaryColor,
+                                      color: Styles.primaryColor,
                                       value: loadingProgress.expectedTotalBytes != null &&
                                               loadingProgress.expectedTotalBytes != null
                                           ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
@@ -316,7 +324,7 @@ class ChatScreenState extends State<ChatScreen> {
                               if (loadingProgress == null) return child;
                               return Center(
                                 child: CircularProgressIndicator(
-                                  color: primaryColor,
+                                  color: Styles.primaryColor,
                                   value: loadingProgress.expectedTotalBytes != null &&
                                           loadingProgress.expectedTotalBytes != null
                                       ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
@@ -328,7 +336,7 @@ class ChatScreenState extends State<ChatScreen> {
                               return Icon(
                                 Icons.account_circle,
                                 size: 35,
-                                color: greyColor,
+                                color: Styles.greyColor,
                               );
                             },
                             width: 35,
@@ -349,7 +357,7 @@ class ChatScreenState extends State<ChatScreen> {
                           ),
                           padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                           width: 200.0,
-                          decoration: BoxDecoration(color: primaryColor, borderRadius: BorderRadius.circular(8.0)),
+                          decoration: BoxDecoration(color: Styles.primaryColor, borderRadius: BorderRadius.circular(8.0)),
                           margin: EdgeInsets.only(left: 10.0),
                         )
                       : document.get('type') == 1
@@ -363,7 +371,7 @@ class ChatScreenState extends State<ChatScreen> {
                                       if (loadingProgress == null) return child;
                                       return Container(
                                         decoration: BoxDecoration(
-                                          color: greyColor2,
+                                          color: Styles.greyColor2,
                                           borderRadius: BorderRadius.all(
                                             Radius.circular(8.0),
                                           ),
@@ -372,7 +380,7 @@ class ChatScreenState extends State<ChatScreen> {
                                         height: 200.0,
                                         child: Center(
                                           child: CircularProgressIndicator(
-                                            color: primaryColor,
+                                            color: Styles.primaryColor,
                                             value: loadingProgress.expectedTotalBytes != null &&
                                                     loadingProgress.expectedTotalBytes != null
                                                 ? loadingProgress.cumulativeBytesLoaded /
@@ -427,7 +435,7 @@ class ChatScreenState extends State<ChatScreen> {
                       child: Text(
                         DateFormat('dd MMM kk:mm')
                             .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
-                        style: TextStyle(color: greyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
+                        style: TextStyle(color: Styles.greyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
                       ),
                       margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
                     )
@@ -602,7 +610,7 @@ class ChatScreenState extends State<ChatScreen> {
           ],
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         ),
-        decoration: BoxDecoration(border: Border(top: BorderSide(color: greyColor2, width: 0.5)), color: Colors.white),
+        decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles.greyColor2, width: 0.5)), color: Colors.white),
         padding: EdgeInsets.all(5.0),
         height: 180.0,
       ),
@@ -626,7 +634,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.image),
                 onPressed: getImage,
-                color: primaryColor,
+                color: Styles.primaryColor,
               ),
             ),
             color: Colors.white,
@@ -637,7 +645,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.face),
                 onPressed: getSticker,
-                color: primaryColor,
+                color: Styles.primaryColor,
               ),
             ),
             color: Colors.white,
@@ -650,11 +658,11 @@ class ChatScreenState extends State<ChatScreen> {
                 onSubmitted: (value) {
                   onSendMessage(textEditingController.text, 0);
                 },
-                style: TextStyle(color: primaryColor, fontSize: 15.0),
+                style: TextStyle(color: Styles.primaryColor, fontSize: 15.0),
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Type your message...',
-                  hintStyle: TextStyle(color: greyColor),
+                  hintStyle: TextStyle(color: Styles.greyColor),
                 ),
                 focusNode: focusNode,
               ),
@@ -668,7 +676,7 @@ class ChatScreenState extends State<ChatScreen> {
               child: IconButton(
                 icon: Icon(Icons.send),
                 onPressed: () => onSendMessage(textEditingController.text, 0),
-                color: primaryColor,
+                color: Styles.primaryColor,
               ),
             ),
             color: Colors.white,
@@ -677,7 +685,7 @@ class ChatScreenState extends State<ChatScreen> {
       ),
       width: double.infinity,
       height: 50.0,
-      decoration: BoxDecoration(border: Border(top: BorderSide(color: greyColor2, width: 0.5)), color: Colors.white),
+      decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles.greyColor2, width: 0.5)), color: Colors.white),
     );
   }
 
@@ -705,7 +713,7 @@ class ChatScreenState extends State<ChatScreen> {
                 } else {
                   return Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryColor),
                     ),
                   );
                 }
@@ -713,7 +721,7 @@ class ChatScreenState extends State<ChatScreen> {
             )
           : Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryColor),
               ),
             ),
     );

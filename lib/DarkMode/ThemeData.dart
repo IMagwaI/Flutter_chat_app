@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 abstract class Styles {
   //colors
   //dyal app
-  final themeColor = Color(0xfff5a623);
-  final primaryColor = Color(0xff203152);
-  final greyColor = Color(0xffaeaeae);
-  final greyColor2 = Color(0xffE8E8E8);
+  static const themeColor = Color(0xfff5a623);
+  static const primaryColor = Color(0xff203152);
+  static const greyColor = Color(0xffaeaeae);
+  static const greyColor2 = Color(0xffE8E8E8);
 
 
   static const Color whiteColor = Color(0xffffffff);
@@ -87,7 +87,7 @@ abstract class Styles {
       primarySwatch: Colors.red,
       primaryColor: isDarkTheme ? Colors.black : Color(0xfff5a623),
 
-      backgroundColor: isDarkTheme ? Colors.black : Color(0xffF1F5FB),
+      backgroundColor: isDarkTheme ? themeColor: primaryColor ,
 
       indicatorColor: isDarkTheme ? Color(0xff0E1D36) : Color(0xffCBDCF8),
       buttonColor: isDarkTheme ? Color(0xff3B3B3B) : Color(0xffF1F5FB),

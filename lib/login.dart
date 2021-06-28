@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/const.dart';
+import 'package:chat_app/DarkMode/ThemeData.dart';
 import 'package:chat_app/home.dart';
 import 'package:chat_app/model/user_chat.dart';
 import 'package:chat_app/widget/loading.dart';
@@ -159,7 +159,7 @@ class LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
           title: Text(
             widget.title,
-            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
         ),

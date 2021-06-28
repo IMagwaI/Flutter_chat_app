@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/chat.dart';
-import 'package:chat_app/const.dart';
+import 'package:chat_app/DarkMode/ThemeData.dart';
 import 'package:chat_app/model/user_chat.dart';
 import 'package:chat_app/settings.dart';
 import 'package:chat_app/widget/loading.dart';
@@ -80,7 +80,7 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
     InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
@@ -134,7 +134,7 @@ class HomeScreenState extends State<HomeScreen> {
             contentPadding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
             children: <Widget>[
               Container(
-                color: themeColor,
+                color: Styles.themeColor,
                 margin: EdgeInsets.all(0.0),
                 padding: EdgeInsets.only(bottom: 10.0, top: 10.0),
                 height: 100.0,
@@ -168,13 +168,13 @@ class HomeScreenState extends State<HomeScreen> {
                     Container(
                       child: Icon(
                         Icons.cancel,
-                        color: primaryColor,
+                        color: Styles.primaryColor,
                       ),
                       margin: EdgeInsets.only(right: 10.0),
                     ),
                     Text(
                       'CANCEL',
-                      style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -188,13 +188,13 @@ class HomeScreenState extends State<HomeScreen> {
                     Container(
                       child: Icon(
                         Icons.check_circle,
-                        color: primaryColor,
+                        color: Styles.primaryColor,
                       ),
                       margin: EdgeInsets.only(right: 10.0),
                     ),
                     Text(
                       'YES',
-                      style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -287,7 +287,7 @@ class HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           'MAIN',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: <Widget>[
@@ -308,7 +308,7 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                         Text(
                           choice.title,
-                          style: TextStyle(color: primaryColor),
+                          style: TextStyle(color: Styles.primaryColor),
                         ),
                       ],
                     ));
@@ -335,7 +335,7 @@ class HomeScreenState extends State<HomeScreen> {
                   } else {
                     return Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryColor),
                       ),
                     );
                   }
@@ -378,7 +378,7 @@ class HomeScreenState extends State<HomeScreen> {
                               height: 50,
                               child: Center(
                                 child: CircularProgressIndicator(
-                                  color: primaryColor,
+                                  color: Styles.primaryColor,
                                   value: loadingProgress.expectedTotalBytes != null &&
                                           loadingProgress.expectedTotalBytes != null
                                       ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
@@ -391,14 +391,14 @@ class HomeScreenState extends State<HomeScreen> {
                             return Icon(
                               Icons.account_circle,
                               size: 50.0,
-                              color: greyColor,
+                              color: Styles.greyColor,
                             );
                           },
                         )
                       : Icon(
                           Icons.account_circle,
                           size: 50.0,
-                          color: greyColor,
+                          color: Styles.greyColor,
                         ),
                   borderRadius: BorderRadius.all(Radius.circular(25.0)),
                   clipBehavior: Clip.hardEdge,
@@ -411,7 +411,7 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'Nickname: ${userChat.nickname}',
                             maxLines: 1,
-                            style: TextStyle(color: primaryColor),
+                            style: TextStyle(color: Styles.primaryColor),
                           ),
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
@@ -420,7 +420,7 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'About me: ${userChat.aboutMe}',
                             maxLines: 1,
-                            style: TextStyle(color: primaryColor),
+                            style: TextStyle(color: Styles.primaryColor),
                           ),
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
@@ -445,7 +445,7 @@ class HomeScreenState extends State<HomeScreen> {
               );
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(greyColor2),
+              backgroundColor: MaterialStateProperty.all<Color>(Styles.greyColor2),
               shape: MaterialStateProperty.all<OutlinedBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
