@@ -10,6 +10,7 @@ import 'package:chat_app/widget/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'otp.dart';
 
@@ -76,7 +77,9 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<Null> handleSignIn() async {
+
+
+Future<Null> handleSignIn() async {
     prefs = await SharedPreferences.getInstance();
 
     this.setState(() {
@@ -111,7 +114,9 @@ class LoginScreenState extends State<LoginScreen> {
             'photoUrl': firebaseUser.photoURL,
             'id': firebaseUser.uid,
             'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-            'chattingWith': null
+            'chattingWith': null,
+            'conversations':[]
+
           });
 
           // Write data to local
@@ -156,75 +161,93 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset:false,
-      appBar: AppBar(
-          title: Text(
-            widget.title,
-            style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 60),
-              child: Center(
-                child: Text(
-                  "Phone Authentication",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-                ),
-              ),
+
+        body: DecoratedBox(
+            decoration: BoxDecoration(
+              image: DecorationImage(image: AssetImage("images/bg.png"), fit: BoxFit.cover),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 40,right: 10,left: 10),
-              child: TextField(
-                decoration: InputDecoration(
-                    hintText: "Phone Number", prefix: Padding(padding: EdgeInsets.all(4),
-                child: Text("+212"),)
-                ),maxLength: 10,keyboardType: TextInputType.number,controller: _controller,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(10),
-              width: double.infinity,
-              child: FlatButton(
-                color: Colors.blue,
-                onPressed:(){
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) =>OTPScreen(_controller.text))
-                  );
-                } ,
-                child: Text('Next',style: TextStyle(color: Colors.white),),
-              ),
-            ),
-            Stack(
-              children: <Widget>[
-                Center(
-                  child: TextButton(
-                    onPressed: () => handleSignIn().catchError((err) {
-                      Fluttertoast.showToast(msg: err.toString());
-                      this.setState(() {
-                        isLoading = false;
-                      });
-                    }),
-                    child: Text(
-                      'SIGN IN WITH GOOGLE',
-                      style: TextStyle(fontSize: 16.0, color: Colors.white),
+          child: Column(
+            children: [
+              Image.asset("images/logo.png",width: 200.0,
+                height: 200.0,
+                fit: BoxFit.cover,),
+              Container(
+                // margin: EdgeInsets.only(top: 80),
+                child: Center(
+                  child: Text(
+                    "Welcome to Chato",
+                    style: GoogleFonts.pacifico(
+                      textStyle: Theme.of(context).textTheme.headline4,
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      // fontStyle: FontStyle.italic,
                     ),
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
                   ),
                 ),
-                // Loading
-                Positioned(
-                  child: isLoading ? const Loading() : Container(),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 40,right: 30,left: 30),
+                child: TextField(
+                  decoration: InputDecoration(
+                      hintText: "Phone Number", prefix: Padding(padding: EdgeInsets.all(4),
+                    child: Text("+212"),)
+                  ),maxLength: 10,keyboardType: TextInputType.number,controller: _controller,
                 ),
-              ],
-            ),
-          ],
+              ),
+
+              Container(
+                margin: EdgeInsets.only(left: 30,right: 30),
+                width: double.infinity,
+                child: FlatButton(
+                  color: Colors.blue,
+                  onPressed:(){
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>OTPScreen(_controller.text))
+                    );
+                  } ,
+                  child: Text('Next',style: TextStyle(color: Colors.white),),
+                ),
+              ),
+              Text(
+                "Or",
+                style: GoogleFonts.pacifico(
+                  textStyle: Theme.of(context).textTheme.headline4,
+                  fontSize: 24,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  // fontStyle: FontStyle.italic,
+                ),
+              ),
+              Stack(
+                children: <Widget>[
+                  Center(
+                    child: TextButton(
+                      onPressed: () => handleSignIn().catchError((err) {
+                        Fluttertoast.showToast(msg: err.toString());
+                        this.setState(() {
+                          isLoading = false;
+                        });
+                      }),
+                      child: Text(
+                        'SIGN IN WITH GOOGLE',
+                        style: TextStyle(fontSize: 16.0, color: Colors.white),
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor:
+                          MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
+                    ),
+                  ),
+                  // Loading
+                  Positioned(
+                    child: isLoading ? const Loading() : Container(),
+                  ),
+                ],
+              ),
+            ]
+          ),
         ));
   }
 }

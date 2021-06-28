@@ -14,11 +14,51 @@
       },
       "oauth_client": [
         {
+          "client_id": "471592692235-66lf52hhtdd07u2eg6cq1j3l3g2r0qqk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat_app",
+            "certificate_hash": "0529acdffe1d32edd4641ea7432211f6125bd248"
+          }
+        },
+        {
+          "client_id": "471592692235-c3mcr13lbit8b3b3k4dukfhu5usuo1t1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat_app",
+            "certificate_hash": "8737bf62e395c82ec07146dcbf739fde23165807"
+          }
+        },
+        {
+          "client_id": "471592692235-ksh0ienu64jetidqpl1l7lpllmrh10i5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat_app",
+            "certificate_hash": "dc1311e456d8e14e423edff4174c5287667065eb"
+          }
+        },
+        {
           "client_id": "471592692235-kumppto1gd9iji9btnf46m4srkiisnbh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.chat_app",
             "certificate_hash": "9726809a1bbb73cb9b3689aaf7a5da8b6f30cf61"
+          }
+        },
+        {
+          "client_id": "471592692235-ljhr66s4gg99ol2msqk16e6ql7121lo6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat_app",
+            "certificate_hash": "6589758d2cdf911c1d1efb123cbda656a00b5957"
+          }
+        },
+        {
+          "client_id": "471592692235-ra2j7ommroabiue66220q32pqv0t4qet.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat_app",
+            "certificate_hash": "b623ab74e221f3c93616b388b9548993683afa59"
           }
         },
         {
