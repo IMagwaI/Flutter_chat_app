@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/chat.dart';
-import 'package:chat_app/const.dart';
+import 'package:chat_app/DarkMode/ThemeData.dart';
 import 'package:chat_app/model/user_chat.dart';
 import 'package:chat_app/settings.dart';
 import 'package:chat_app/widget/loading.dart';
@@ -73,7 +73,7 @@ class ContactScreenState extends State<ContactScreen> {
   }
 
   void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
     InitializationSettings initializationSettings =
     InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
@@ -179,7 +179,7 @@ class ContactScreenState extends State<ContactScreen> {
         appBar: AppBar(
         title: Text(
           'CONTACTS',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: <Widget>[
@@ -193,14 +193,14 @@ class ContactScreenState extends State<ContactScreen> {
                       children: <Widget>[
                         Icon(
                           choice.icon,
-                          color: primaryColor,
+                          color: Styles.primaryColor,
                         ),
                         Container(
                           width: 10.0,
                         ),
                         Text(
                           choice.title,
-                          style: TextStyle(color: primaryColor),
+                          style: TextStyle(color: Styles.primaryColor),
                         ),
                       ],
                     ));
@@ -227,7 +227,7 @@ class ContactScreenState extends State<ContactScreen> {
                   } else {
                     return Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryColor),
                       ),
                     );
                   }
@@ -280,7 +280,7 @@ class ContactScreenState extends State<ContactScreen> {
                         height: 50,
                         child: Center(
                           child: CircularProgressIndicator(
-                            color: primaryColor,
+                            color: Styles.primaryColor,
                             value: loadingProgress.expectedTotalBytes != null &&
                                 loadingProgress.expectedTotalBytes != null
                                 ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
@@ -293,14 +293,14 @@ class ContactScreenState extends State<ContactScreen> {
                       return Icon(
                         Icons.account_circle,
                         size: 50.0,
-                        color: greyColor,
+                        color: Styles.greyColor,
                       );
                     },
                   )
                       : Icon(
                     Icons.account_circle,
                     size: 50.0,
-                    color: greyColor,
+                    color: Styles.greyColor,
                   ),
                   borderRadius: BorderRadius.all(Radius.circular(25.0)),
                   clipBehavior: Clip.hardEdge,
@@ -313,7 +313,7 @@ class ContactScreenState extends State<ContactScreen> {
                           child: Text(
                             'Nickname: ${userChat.nickname}',
                             maxLines: 1,
-                            style: TextStyle(color: primaryColor),
+                            style: TextStyle(color: Styles.primaryColor),
                           ),
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
@@ -322,7 +322,7 @@ class ContactScreenState extends State<ContactScreen> {
                           child: Text(
                             'About me: ${userChat.aboutMe}',
                             maxLines: 1,
-                            style: TextStyle(color: primaryColor),
+                            style: TextStyle(color: Styles.primaryColor),
                           ),
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
@@ -347,7 +347,7 @@ class ContactScreenState extends State<ContactScreen> {
               );
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(greyColor2),
+              backgroundColor: MaterialStateProperty.all<Color>(Styles.greyColor2),
               shape: MaterialStateProperty.all<OutlinedBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),

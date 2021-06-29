@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chat_app/const.dart';
+import 'package:chat_app/DarkMode/ThemeData.dart';
 import 'package:photo_view/photo_view.dart';
 
 class FullPhoto extends StatelessWidget {
@@ -13,7 +13,7 @@ class FullPhoto extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'FULL PHOTO',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),

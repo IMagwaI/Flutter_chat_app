@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../const.dart';
+import '../DarkMode/ThemeData.dart';
 
 class Loading extends StatelessWidget {
   const Loading();
@@ -10,7 +10,7 @@ class Loading extends StatelessWidget {
     return Container(
       child: Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+          valueColor: AlwaysStoppedAnimation<Color>(Styles.themeColor),
         ),
       ),
       color: Colors.white.withOpacity(0.8),

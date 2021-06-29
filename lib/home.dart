@@ -6,19 +6,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/chat.dart';
-import 'package:chat_app/const.dart';
+import 'package:chat_app/DarkMode/ThemeData.dart';
 import 'package:chat_app/model/user_chat.dart';
 import 'package:chat_app/settings.dart';
 import 'package:chat_app/widget/loading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 
 import 'contact.dart';
 import 'groupchat.dart';
 import 'main.dart';
+import 'DarkMode/DarkThemeProvider.dart';
 
 class HomeScreen extends StatefulWidget {
   final String currentUserId;
@@ -38,6 +41,7 @@ class HomeScreenState extends State<HomeScreen> {
       FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final ScrollController listScrollController = ScrollController();
+  //final themeProvider = Provider.of<DarkThemeProvider>(context);
   SharedPreferences? prefs;
 
   int _limit = 20;
@@ -46,6 +50,7 @@ class HomeScreenState extends State<HomeScreen> {
   List<Choice> choices = const <Choice>[
     const Choice(title: 'Settings', icon: Icons.settings),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
+    const Choice(title: 'Appearance', icon: Icons.light_mode)
   ];
 
   @override
@@ -82,12 +87,10 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
-    IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings();
-    InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
+    InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
@@ -98,15 +101,6 @@ class HomeScreenState extends State<HomeScreen> {
       setState(() {
         _limit += _limitIncrement;
       });
-    }
-  }
-
-  void onItemMenuPress(Choice choice) {
-    if (choice.title == 'Log out') {
-      handleSignOut();
-    } else {
-
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));
     }
   }
 
@@ -154,7 +148,7 @@ class HomeScreenState extends State<HomeScreen> {
                 EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
             children: <Widget>[
               Container(
-                color: themeColor,
+                color: Styles.themeColor,
                 margin: EdgeInsets.all(0.0),
                 padding: EdgeInsets.only(bottom: 10.0, top: 10.0),
                 height: 100.0,
@@ -191,14 +185,13 @@ class HomeScreenState extends State<HomeScreen> {
                     Container(
                       child: Icon(
                         Icons.cancel,
-                        color: primaryColor,
+                        color: Styles.primaryColor,
                       ),
                       margin: EdgeInsets.only(right: 10.0),
                     ),
                     Text(
                       'CANCEL',
-                      style: TextStyle(
-                          color: primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -212,14 +205,13 @@ class HomeScreenState extends State<HomeScreen> {
                     Container(
                       child: Icon(
                         Icons.check_circle,
-                        color: primaryColor,
+                        color: Styles.primaryColor,
                       ),
                       margin: EdgeInsets.only(right: 10.0),
                     ),
                     Text(
                       'YES',
-                      style: TextStyle(
-                          color: primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -255,11 +247,65 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<DarkThemeProvider>(context);
+    void onItemMenuPress(Choice choice) {
+      /*if (choice.title == 'Log out') {
+      handleSignOut();
+    } else {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));
+    }*/
+      switch(choice.title) {
+        case 'Log out': {
+          handleSignOut();
+        }
+        break;
+
+        case 'Setting': {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));;
+        }
+        break;
+        case 'Appearance': {
+          Alert(
+            context: context,
+            type: AlertType.none,
+            title: "Appearance",
+            desc: "",
+            buttons: [
+              DialogButton(
+                  child: Text(
+                    "Dark",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () => { themeProvider.darkTheme = true,
+                    Navigator.pop(context),},
+                  width: 60,
+                  color: Colors.black
+              ),
+              DialogButton(
+                child: Text(
+                  "Light",
+                  style: TextStyle(color: Colors.black87, fontSize: 20),
+                ),
+                onPressed: () => {themeProvider.darkTheme = false,
+                  Navigator.pop(context),},
+                width: 60,
+                color: Colors.yellowAccent,
+              )
+            ],
+          ).show();
+        }
+        break;
+        default: {
+          //statements;
+        }
+        break;
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'MAIN',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Styles.primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: <Widget>[
@@ -273,14 +319,14 @@ class HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         Icon(
                           choice.icon,
-                          color: primaryColor,
+                          color: Theme.of(context).backgroundColor,
                         ),
                         Container(
                           width: 10.0,
                         ),
                         Text(
                           choice.title,
-                          style: TextStyle(color: primaryColor),
+                          style: TextStyle(color: Styles.primaryColor),
                         ),
                       ],
                     ));
@@ -318,7 +364,7 @@ class HomeScreenState extends State<HomeScreen> {
                   } else {
                     return Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryColor),
                       ),
                     );
                   }
@@ -395,7 +441,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     groupName,
                                     maxLines: 1,
                                     style:
-                                    TextStyle(color: primaryColor),
+                                    TextStyle(color: Styles.primaryColor),
                                   ),
                                   alignment: Alignment.centerLeft,
                                   margin: EdgeInsets.fromLTRB(
@@ -418,7 +464,7 @@ class HomeScreenState extends State<HomeScreen> {
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                      MaterialStateProperty.all<Color>(greyColor2),
+                      MaterialStateProperty.all<Color>(Styles.greyColor2),
                       shape: MaterialStateProperty.all<OutlinedBorder>(
                         RoundedRectangleBorder(
                           borderRadius:
@@ -468,7 +514,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               child: Center(
                                                 child:
                                                     CircularProgressIndicator(
-                                                  color: primaryColor,
+                                                  color: Styles.primaryColor,
                                                   value: loadingProgress
                                                                   .expectedTotalBytes !=
                                                               null &&
@@ -489,14 +535,14 @@ class HomeScreenState extends State<HomeScreen> {
                                             return Icon(
                                               Icons.account_circle,
                                               size: 50.0,
-                                              color: greyColor,
+                                              color: Styles.greyColor,
                                             );
                                           },
                                         )
                                       : Icon(
                                           Icons.account_circle,
                                           size: 50.0,
-                                          color: greyColor,
+                                          color: Styles.greyColor,
                                         ),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(25.0)),
@@ -511,7 +557,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             '${userChat.nickname}',
                                             maxLines: 1,
                                             style:
-                                                TextStyle(color: primaryColor),
+                                                TextStyle(color: Styles.primaryColor),
                                           ),
                                           alignment: Alignment.centerLeft,
                                           margin: EdgeInsets.fromLTRB(
@@ -538,7 +584,7 @@ class HomeScreenState extends State<HomeScreen> {
                             },
                             style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all<Color>(greyColor2),
+                                  MaterialStateProperty.all<Color>(Styles.greyColor2),
                               shape: MaterialStateProperty.all<OutlinedBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius:
