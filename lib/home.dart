@@ -260,7 +260,7 @@ class HomeScreenState extends State<HomeScreen> {
         }
         break;
 
-        case 'Setting': {
+        case 'Settings': {
           Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSettings(ownid: currentUserId,)));;
         }
         break;
