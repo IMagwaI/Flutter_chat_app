@@ -83,7 +83,7 @@ abstract class Styles {
       //* Custom Google Font
       //  fontFamily: Devfest.google_sans_family,
       primarySwatch: Colors.red,
-      primaryColor: isDarkTheme ? Colors.black : Color(0xfff5a623),
+      primaryColor: isDarkTheme ? Colors.black : Color(0xff9106ad),
 
       backgroundColor: isDarkTheme ? themeColor: primaryColor ,
 
