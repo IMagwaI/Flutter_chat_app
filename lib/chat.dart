@@ -287,12 +287,12 @@ class ChatScreenState extends State<ChatScreen> {
                     leading: Icon(Icons.videocam),
                     title: Text('Video'),
                     onTap: () => getFile(3)),
-                ListTile(
-                  leading: Icon(Icons.insert_drive_file),
-                  title: Text('File'),
-                  onTap: () => () {},
-                  // onTap: () => getFile(4)
-                ),
+                // ListTile(
+                //   leading: Icon(Icons.insert_drive_file),
+                //   title: Text('File'),
+                //   onTap: () => () {},
+                //   // onTap: () => getFile(4)
+                // ),
               ],
             ),
           );
