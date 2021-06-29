@@ -159,10 +159,12 @@ class ContactScreenState extends State<ContactScreen> {
                 var height = MediaQuery.of(context).size.height;
                 var width = MediaQuery.of(context).size.width;
 
-                return Container(
-                  child:   Newgroupdialog(currentUserId,users),
-                  height: height - 400,
-                  width: width - 400,
+                return SingleChildScrollView(
+                  child: Container(
+                    child:   Newgroupdialog(currentUserId,users),
+                    height: height - 400,
+                    // width: width - 400,
+                  ),
                 );
               },
             ),
@@ -174,7 +176,7 @@ class ContactScreenState extends State<ContactScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
         title: Text(
           'CONTACTS',
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
