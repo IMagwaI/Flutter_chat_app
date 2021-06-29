@@ -61,7 +61,7 @@ dev_dependencies:
   multi_select_flutter: ^4.0.0
   google_fonts: ^2.1.0
   flutter_launcher_icons:
-  file_picker: ^1.4.0+1
+#  file_picker: ^1.4.0+1
   emoji_picker: ^0.0.2
   video_player: ^2.1.6
   flutter_downloader: ^1.2.2

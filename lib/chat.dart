@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import './call.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:file_picker/file_picker.dart';
+// import 'package:file_picker/file_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'chewie_item.dart';
 
@@ -204,18 +204,18 @@ class ChatScreenState extends State<ChatScreen> {
       case 3:
         pickedFile = await imagePicker.getVideo(source: ImageSource.gallery);
         break;
-      case 4:
-        File file = await FilePicker.getFile();
-        if (file != null) {
-          imageFile = File(file.path);
-          if (imageFile != null) {
-            setState(() {
-              isLoading = true;
-            });
-            uploadFile(typeOfUpload);
-          }
-        }
-        break;
+      // case 4:
+      //   File file = await FilePicker.getFile();
+      //   if (file != null) {
+      //     imageFile = File(file.path);
+      //     if (imageFile != null) {
+      //       setState(() {
+      //         isLoading = true;
+      //       });
+      //       uploadFile(typeOfUpload);
+      //     }
+      //   }
+      //   break;
     }
     if (pickedFile != null) {
       imageFile = File(pickedFile.path);
