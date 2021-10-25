@@ -1,17 +1,28 @@
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+
 # chat_app
+##A multiplateforme chat application.
 
-A chat application.
+##Screenshots
 
-## Getting Started
+  HomePage                 |   Product Detail Page        |  Cart Page        |  Cart Page
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+![](assets/home.jpeg?raw=true)|![](assets/main.jpeg?raw=true)|![](assets/chat.jpeg?raw=true)|![](assets/contacts.jpeg?raw=true)
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+[contributors-shield]: https://img.shields.io/github/contributors/IMagwaI/Flutter_chat_app.svg?style=for-the-badge
+[contributors-url]: https://github.com/IMagwaI/Flutter_chat_app/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/IMagwaI/Flutter_chat_app.svg?style=for-the-badge
+[forks-url]: https://github.com/IMagwaI/Flutter_chat_app/network/members
+[stars-shield]: https://img.shields.io/github/stars/IMagwaI/Flutter_chat_app.svg?style=for-the-badge
+[stars-url]: https://github.com/IMagwaI/Flutter_chat_app/stargazers
+[issues-shield]: https://img.shields.io/github/issues/IMagwaI/Flutter_chat_app.svg?style=for-the-badge
+[issues-url]: https://github.com/IMagwaI/Flutter_chat_app/issues
+[license-shield]: https://img.shields.io/github/license/IMagwaI/Flutter_chat_app.svg?style=for-the-badge
+[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# Flutter_chat_app" 
